@@ -1,12 +1,13 @@
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { v4 as uuid } from 'uuid';
+import { v4 } from 'uuid';
 import { ROLE } from "../constant/user.role";
+
 
 @Entity()
 export class User extends BaseEntity {
     constructor() {
         super();
-        this.id = uuid(); // Generate a new UUID for the id
+        this.id = v4(); // Generate a new UUID for the id
     }
 
     @PrimaryGeneratedColumn('uuid')

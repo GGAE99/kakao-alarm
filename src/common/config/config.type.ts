@@ -4,8 +4,8 @@ export interface ConfigType {
     DB_HOST: string;
     DB_PORT: number;
     DB_USER: string;
-    DB_PASSWORD: string;
-    DB_DATABASE: string;
+    DB_PASS: string;
+    DB_NAME: string;
 
     JWT_ACCESS_SECRET: string;
     JWT_REFRESH_SECRET: string;

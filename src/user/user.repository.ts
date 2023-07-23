@@ -5,32 +5,57 @@ import { CustomRepository } from "src/typeorm-ex.decorator";
 import { uuid } from "uuidv4";
 import * as bcrypt from 'bcrypt';
 import { User } from "./entity/user.entity";
+import { ROLE } from "./constant/user.role";
+import { UserLoginDto } from "./dto/user-login.dto";
+import { UserErrorEnum } from "src/common/Error/user.error.enum";
 
 @CustomRepository(User)
 export class UserRepository extends Repository<User>{
 
-    async login(email: string): Promise <User>{
-        if (!email) {
-            throw new BadRequestException('signId and signPassword must be provided');
-          }
-
-        const found = await this.findOne({where:{ email }});
+    async getAllUsers(): Promise<User[]>{
+        const found = await this.find();
         if(!found){
-            throw new NotFoundException(`Can't find Board with id ${email}`);
+            throw new NotFoundException(UserErrorEnum.USER_NOT_FOUND);
         }
         return found;
     }
 
-    async createSign(createUserDto: CreateUserDto): Promise<User>{
+    async signUp(createUserDto: CreateUserDto): Promise<void>{
         const {email, password} = createUserDto;
 
         const user = this.create({
             id: uuid(),
             email,
             password: await bcrypt.hash(password, 10),
+            role: ROLE.USER,
+            refreshToken: null,
         })
+        if(!user){
+            throw new BadRequestException(UserErrorEnum.SIGN_UP_ERROR);
+        }
 
         await this.save(user);
-        return user;
+        return null;
+    }
+
+    async signIn(userLoginDto: UserLoginDto): Promise <User>{
+        const {email, password} = userLoginDto;
+        if (!email) {
+            throw new BadRequestException(UserErrorEnum.NO_EMAIL_OR_PASSWORD);
+          }
+
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        const found = await this.findOne({
+            where:{ 
+                email,
+                password: await bcrypt.hash(hashedPassword, 10),
+            }
+        });
+
+        if(!found){
+            throw new NotFoundException(`Can't find Board with id ${email}`);
+        }
+        return found;
     }
 }

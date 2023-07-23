@@ -1,16 +1,19 @@
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 import { ConfigType } from "./config.type";
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 const configService = new ConfigService<ConfigType>;
 
 export const typeOrmConfig: TypeOrmModuleOptions = {
   type: 'mysql',
-  host: 'localhost',
+  host: configService.get('DB_HOST') || 'localhost',
   port: configService.get("DB_PORT"),
   username: configService.get('DB_USER'),
-  password: configService.get('DB_PASSWORD'),
-  database: configService.get('DB_DATABASE'),
+  password: configService.get('DB_PASS'),
+  database: configService.get('DB_NAME'),
   entities: [__dirname + '/../**/*.entity.{js,ts}'],
   synchronize: false,
   migrations: [],

@@ -1,7 +1,10 @@
 import { Module } from '@nestjs/common';
 import { UserModule } from './user/user.module';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './common/config/config.schema';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ConfigType } from './common/config/config.type';
+import { typeOrmConfig } from './common/config/typeorm.config';
 
 @Module({
   imports: [
@@ -10,6 +13,23 @@ import { configValidationSchema } from './common/config/config.schema';
       isGlobal: true,
       validationSchema: configValidationSchema,
     }),
+    TypeOrmModule.forRoot(typeOrmConfig),
+    // TypeOrmModule.forRootAsync({
+    //   imports: [ConfigModule],
+    //   inject: [ConfigService],
+    //   useFactory: (configService: ConfigService<ConfigType>) => ({
+    //     type: 'mysql',
+    //     host: configService.get('DB_HOST') || 'localhost',
+    //     port: configService.get("DB_PORT"),
+    //     username: configService.get('DB_USER'),
+    //     password: configService.get('DB_PASS'),
+    //     database: configService.get('DB_NAME'),
+    //     entities: [__dirname + '/../**/*.entity.{js,ts}'],
+    //     synchronize: false,
+    //     migrations: [],
+    //     subscribers: [],
+    //   }),
+    // }),
     UserModule,
   ],
   controllers: [],
