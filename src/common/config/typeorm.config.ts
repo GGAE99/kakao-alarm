@@ -14,7 +14,7 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
   username: configService.get('DB_USER'),
   password: configService.get('DB_PASS'),
   database: configService.get('DB_NAME'),
-  entities: [__dirname + '/../**/*.entity.{js,ts}'],
+  entities: [__dirname + '/../../**/*.entity.{js,ts}'],
   synchronize: false,
   migrations: [],
   subscribers: [],

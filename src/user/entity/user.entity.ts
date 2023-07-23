@@ -1,16 +1,11 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
-import { v4 } from 'uuid';
+import { BaseEntity, Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { ROLE } from "../constant/user.role";
 
 
 @Entity()
 export class User extends BaseEntity {
-    constructor() {
-        super();
-        this.id = v4(); // Generate a new UUID for the id
-    }
 
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryColumn()
     id: string;
 
     @Column({ type: 'varchar', unique: true })

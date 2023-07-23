@@ -22,11 +22,13 @@ export class UserRepository extends Repository<User>{
 
     async signUp(createUserDto: CreateUserDto): Promise<void>{
         const {email, password} = createUserDto;
+        const hashedPassword = await bcrypt.hash(password, 10);
+        
 
         const user = this.create({
             id: uuid(),
             email,
-            password: await bcrypt.hash(password, 10),
+            password: hashedPassword,
             role: ROLE.USER,
             refreshToken: null,
         })
