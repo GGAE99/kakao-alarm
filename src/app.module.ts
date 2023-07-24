@@ -3,8 +3,9 @@ import { UserModule } from './user/user.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { configValidationSchema } from './common/config/config.schema';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigType } from './common/config/config.type';
+import { MyConfigType } from './common/config/config.type';
 import { typeOrmConfig } from './common/config/typeorm.config';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { typeOrmConfig } from './common/config/typeorm.config';
     //   }),
     // }),
     UserModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],

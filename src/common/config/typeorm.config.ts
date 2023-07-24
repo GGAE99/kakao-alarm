@@ -1,11 +1,11 @@
 import { ConfigService } from "@nestjs/config";
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
-import { ConfigType } from "./config.type";
+import { MyConfigType } from "./config.type";
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-const configService = new ConfigService<ConfigType>;
+const configService = new ConfigService<MyConfigType>;
 
 export const typeOrmConfig: TypeOrmModuleOptions = {
   type: 'mysql',

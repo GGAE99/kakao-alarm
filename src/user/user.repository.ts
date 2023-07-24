@@ -12,18 +12,18 @@ import { UserErrorEnum } from "src/common/Error/user.error.enum";
 @CustomRepository(User)
 export class UserRepository extends Repository<User>{
 
-    async getAllUsers(): Promise<User[]>{
+    async getAllUsers(): Promise<User[]> {
         const found = await this.find();
-        if(!found){
+        if (!found) {
             throw new NotFoundException(UserErrorEnum.USER_NOT_FOUND);
         }
         return found;
     }
 
-    async signUp(createUserDto: CreateUserDto): Promise<void>{
-        const {email, password} = createUserDto;
+    async signUp(createUserDto: CreateUserDto): Promise<void> {
+        const { email, password } = createUserDto;
         const hashedPassword = await bcrypt.hash(password, 10);
-        
+
 
         const user = this.create({
             id: uuid(),
@@ -32,7 +32,7 @@ export class UserRepository extends Repository<User>{
             role: ROLE.USER,
             refreshToken: null,
         })
-        if(!user){
+        if (!user) {
             throw new BadRequestException(UserErrorEnum.SIGN_UP_ERROR);
         }
 
@@ -40,24 +40,31 @@ export class UserRepository extends Repository<User>{
         return null;
     }
 
-    async signIn(userLoginDto: UserLoginDto): Promise <User>{
-        const {email, password} = userLoginDto;
+    async signIn(userLoginDto: UserLoginDto): Promise<void> {
+        const { email, password } = userLoginDto;
         if (!email) {
             throw new BadRequestException(UserErrorEnum.NO_EMAIL_OR_PASSWORD);
-          }
+        }
+        const user = await this.getUserByEmail(email);
+        if (!user) {
+            throw new NotFoundException(`Can't find Board with id in signIn ${email}`);
+        }
+        return null;
+    }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        
+    async getUserByEmail(email: string): Promise<User> {
         const found = await this.findOne({
-            where:{ 
-                email,
-                password: await bcrypt.hash(hashedPassword, 10),
-            }
+            where: { email }
         });
-
-        if(!found){
-            throw new NotFoundException(`Can't find Board with id ${email}`);
+        if (!found) {
+            throw new NotFoundException(`Can't find Board with id in Email ${email}`);
         }
         return found;
+    }
+
+    async updateRefreshToken(email:string, hashed:string): Promise<void> {
+        const user = await this.getUserByEmail(email);
+        user.refreshToken = hashed;
+        await this.save(user);
     }
 }

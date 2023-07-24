@@ -1,4 +1,4 @@
-export interface ConfigType {
+export interface MyConfigType {
     PORT: number;
 
     DB_HOST: string;
