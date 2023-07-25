@@ -13,18 +13,9 @@ export class UserController {
         private readonly userService: UserService,
     ) { }
 
-    @UseGuards(AccessTokenGuard)
-    @Get('allUsers')
-    async getAllUsers(
-        @Req() req: Request,
-    ): Promise<User[]> {
-        return await this.userService.getAllUsers();
-    }
-
     @Post('signUp')
     async signUp(
         @Body() createUserDto: CreateUserDto,
-        @Res({ passthrough: true }) response: Response,
     ): Promise<void> {
         return await this.userService.signUp(createUserDto);
     }
@@ -38,14 +29,11 @@ export class UserController {
     }
 
     @UseGuards(AccessTokenGuard)
-    @Get('logout')
-    async logout(
-        @Req() req,
-        @Res({ passthrough: true }) response: Response,
-    ): Promise<void> {
-        return this.userService.logout(req.user, response);
+    @Get('allUsers')
+    async getAllUsers( ): Promise<User[]> {
+        return await this.userService.getAllUsers();
     }
-
+    
     @UseGuards(RefreshTokenGuard)
     @Post('refresh/test')
     async refreshTest(
@@ -54,4 +42,14 @@ export class UserController {
     ): Promise<void> {
         return await this.userService.refreshTest(req, response);
     }
+
+    @UseGuards(AccessTokenGuard)
+    @Get('logout')
+    async logout(
+        @Req() req,
+        @Res({ passthrough: true }) response: Response,
+    ): Promise<void> {
+        return this.userService.logout(req.user, response);
+    }
+
 }

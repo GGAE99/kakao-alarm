@@ -1,4 +1,4 @@
-export enum ERROR_MESSAGE {
+export enum AUTH_ERROR_MESSAGE {
     DUPLICATED_EMAIL = '이미 존재하는 이메일입니다.',
     INVALID_CREDENTIAL = '유요한 계정정보가 아닙니다.',
     INVALID_TOKEN = '유효한 토큰이 아닙니다.',

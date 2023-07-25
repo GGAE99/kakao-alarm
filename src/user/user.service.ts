@@ -14,18 +14,22 @@ export class UserService {
         private readonly userRepository: UserRepository
     ) { }
 
-    async getAllUsers(): Promise<User[]> {
-        return await this.userRepository.getAllUsers();
-    }
-
     async signUp(createUserDto: CreateUserDto): Promise<void> {
         await this.userRepository.signUp(createUserDto);
         return null;
     }
 
     async signIn(userLoginDto: UserLoginDto, response: Response): Promise<void> {
-        await this.authService.signin(userLoginDto, response);
+        await this.authService.userSignIn(userLoginDto, response);
         return await this.userRepository.signIn(userLoginDto);
+    }
+
+    async getAllUsers(): Promise<User[]> {
+        return await this.userRepository.getAllUsers();
+    }
+
+    async refreshTest(req, response: Response): Promise<void> {
+        return await this.authService.refreshTokens(req.user, response);
     }
 
     async logout(
@@ -40,7 +44,4 @@ export class UserService {
         return await this.userRepository.getUserByEmail(email);
     }
 
-    async refreshTest(req, response: Response): Promise<void> {
-        return await this.authService.refreshTokens(req.user, response);
-    }
 }

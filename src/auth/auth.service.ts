@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { CookieKeys, JwtPayload, JwtPayloadWithRefreshToken, Tokens } from './constant/auth.type';
-import { ERROR_MESSAGE } from './Error/auth.error.enum';
+import { AUTH_ERROR_MESSAGE } from './Error/auth.error.enum';
 import { UserRepository } from 'src/user/user.repository';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -17,7 +17,7 @@ export class AuthService {
         private readonly userRepository: UserRepository
     ) { }
 
-    async signin(
+    async userSignIn(
         userLoginDto: UserLoginDto,
         response: Response,
       ): Promise<void> {
@@ -31,7 +31,7 @@ export class AuthService {
           return this.setTokensToCookie(response, tokens);
         }
     
-        throw new UnauthorizedException(ERROR_MESSAGE.INVALID_CREDENTIAL);
+        throw new UnauthorizedException(AUTH_ERROR_MESSAGE.INVALID_CREDENTIAL);
       }
 
     async refreshTokens(
@@ -40,10 +40,10 @@ export class AuthService {
     ): Promise<void> {
         const user = await this.userRepository.getUserByEmail(email);
         if (!user || !user.refreshToken)
-            throw new ForbiddenException(ERROR_MESSAGE.NOT_LOGINED);
+            throw new ForbiddenException(AUTH_ERROR_MESSAGE.NOT_LOGINED);
 
         const isValid = await bcrypt.compare(refreshToken, user.refreshToken);
-        if (!isValid) throw new ForbiddenException(ERROR_MESSAGE.INVALID_TOKEN);
+        if (!isValid) throw new ForbiddenException(AUTH_ERROR_MESSAGE.INVALID_TOKEN);
 
         const tokens = await this.getTokens(user.email);
         await this.updateRefreshToken(user.email, tokens.refreshToken);
