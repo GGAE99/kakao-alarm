@@ -52,4 +52,12 @@ export class UserController {
         return this.userService.logout(req.user, response);
     }
 
+
+    @Post('getUserByEmail')
+    async getUserByEmail(
+        @Body('email') email: string,
+    ): Promise<User> {
+        return await this.userService.getUserByEmail(email);
+    }
+
 }

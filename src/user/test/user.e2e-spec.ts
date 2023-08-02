@@ -28,27 +28,44 @@ describe('User', () => {
     // 'dummyUser'를 단일 요소를 가지는 배열로 만들기
     const users: User[] = [dummyUser, dummyUserTwo];
 
+    const searchedUser: User = new User();
+    searchedUser.id = '1';
+    searchedUser.email = 'test@example.com';
+    searchedUser.password = 'hashed_password';
+    searchedUser.role = ROLE.ADMIN; // ROLE.ADMIN 또는 다른 ROLE 값으로 설정
+    searchedUser.refreshToken = null;
+
     let app: INestApplication;
     let userService = { getAllUser: () => users };
 
     beforeAll(async () => {
         const moduleRef = await Test.createTestingModule({
             imports: [UserModule],
-        })
-            .overrideProvider(UserService)
+        }).overrideProvider(UserService)
             .useValue(userService)
             .compile();
 
         app = moduleRef.createNestApplication(); // 런타임 환경 인스턴스화
         await app.init();
+        console.log("app initialized:", app);
     });
 
     it('/GET allUsers', () => {
         return request(app.getHttpServer())
-            .get('/allUsers') // 요청 경로를 '/allUsers'로 수정
+            .get('user/allUsers') // 요청 경로를 '/allUsers'로 수정
             .expect(200)
             .expect({
                 data: userService.getAllUser(),
+            });
+    });
+
+    it('/POST getUserByEmail', () => {
+        return request(app.getHttpServer())
+            .post('user/getUserByEmail') // 요청 경로를 '/getUserByEmail'로 수정
+            .send({ email: 'test@example.com' })
+            .expect(200)
+            .expect({
+                data: searchedUser,
             });
     });
 
