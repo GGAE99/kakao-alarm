@@ -34,6 +34,11 @@ export class AuthService {
         throw new UnauthorizedException(AUTH_ERROR_MESSAGE.INVALID_CREDENTIAL);
       }
 
+      async logout(response: Response): Promise<void> {
+        response.clearCookie(CookieKeys.ACCESS_TOKEN);
+        response.clearCookie(CookieKeys.REFRESH_TOKEN);
+    }
+
     async refreshTokens(
         { email, refreshToken, }: Partial<JwtPayloadWithRefreshToken>,
         response: Response,
@@ -50,10 +55,7 @@ export class AuthService {
         this.setTokensToCookie(response, tokens);
     }
 
-    async logout(response: Response): Promise<void> {
-        response.clearCookie(CookieKeys.ACCESS_TOKEN);
-        response.clearCookie(CookieKeys.REFRESH_TOKEN);
-    }
+ 
 
     async getTokens(email: string): Promise<Tokens> {
         const payload: JwtPayload = { email };
